@@ -26,10 +26,10 @@ class ProductForm extends Component {
 	handleSubmit(event) {
 		event.preventDefault()
 		if (this.props.product) {
+			this.setState({saveDisabled : true})
 			const {name, price, inStock, categoryId} = this.state
 			const newProduct = Object.assign(this.props.product, {name,price,inStock,categoryId})
 			this.props.editProduct(newProduct) 
-			this.setState({saveDisabled : true})
 		}
 		else {
 			this.props.addProduct(this.state)

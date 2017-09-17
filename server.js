@@ -86,7 +86,6 @@ app.get('/api/categories', (req, res, next)=> {
 app.put('/api/products/:id', (req, res, next)=>{
   Product.findById(req.params.id)
 		.then( product => {
-			console.log('editing', req.body)
       if(!req.body.categoryId){
         req.body.categoryId = null;
       }

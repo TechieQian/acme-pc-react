@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import ProductForm from './ProductForm'
 import Summary from './Summary'
 import axios from 'axios'
+import ProductList from './ProductList'
 
 class Main extends Component {
 	constructor() {
@@ -53,22 +54,12 @@ class Main extends Component {
 	render() {
 		return (
 			<div className='row'>
-				<div className='col-sm-6'>
-				{
-					this.state.products.map((product)=> 
-						<div className='col-sm-4' key={product.id}>
-							<div className='panel panel-default'>
-								<ProductForm 
-									categories={this.state.categories} 
-									product={product} 
-									editProduct={this.editProduct} 
-									deleteProduct={this.deleteProduct}
-								/>
-							</div>
-						</div>
-					)
-				}
-				</div>
+				<ProductList
+					categories={this.state.categories} 
+					products={this.state.products} 
+					editProduct={this.editProduct} 
+					deleteProduct={this.deleteProduct}
+				/>
 				<div className='col-sm-3'> 
 					<div className='panel panel-default'>
 						<div className='panel-heading'> Add a product </div>
