@@ -29,12 +29,12 @@ class ProductForm extends Component {
 			const {name, price, inStock, categoryId} = this.state
 			const newProduct = Object.assign(this.props.product, {name,price,inStock,categoryId})
 			this.props.editProduct(newProduct) 
+			this.setState({saveDisabled : true})
 		}
 		else {
 			this.props.addProduct(this.state)
-			this.setState({ name : '', price : 0, inStock : false, categoryId : undefined })
+			this.setState({ name : '', price : 0, inStock : false, categoryId : undefined, saveDisabled : true })
 		}
-		this.setState({saveDisabled : true})
 	}
 
 	handleChange(event) {
