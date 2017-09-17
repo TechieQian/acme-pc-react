@@ -27,11 +27,8 @@ class Main extends Component {
 	}
 
 	editProduct(product) {
-		console.log('hit edit route')
-		console.log(product)
 		axios.put(`/api/products/${product.id}`, product)
 			.then((product)=> {
-				console.log('edit success')
 				this.getProductCategories()
 			})
 	}
@@ -40,7 +37,6 @@ class Main extends Component {
 		axios.post(`/api/products/`, product)
 			.then((product)=> {
 				this.getProductCategories()
-				console.log('product added')
 			})
 			.catch((err)=> {
 				console.log(`error ${err}`)

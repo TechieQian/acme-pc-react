@@ -25,7 +25,6 @@ class ProductForm extends Component {
 
 	handleSubmit(event) {
 		event.preventDefault()
-		console.log(`handling submit`)
 		if (this.props.product) {
 			const {name, price, inStock, categoryId} = this.state
 			const newProduct = Object.assign(this.props.product, {name,price,inStock,categoryId})
@@ -35,15 +34,13 @@ class ProductForm extends Component {
 			this.props.addProduct(this.state)
 			this.setState({ name : '', price : 0, inStock : false, categoryId : undefined })
 		}
+		this.setState({saveDisabled : true})
 	}
 
 	handleChange(event) {
-		console.log('handling change')
-		console.log(event.target.name)
 		const value = event.target.name == "inStock" ? 
 			event.target.checked :
 			event.target.value
-		console.log(`setting ${event.target.name} to ${value}`)
 		this.setState({ [event.target.name] : value, saveDisabled : false})
 	}
 
