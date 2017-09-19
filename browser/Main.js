@@ -28,19 +28,16 @@ class Main extends Component {
 	}
 
 	editProduct(product) {
-		axios.put(`/api/products/${product.id}`, product)
+		return axios.put(`/api/products/${product.id}`, product)
 			.then((product)=> {
 				this.getProductCategories()
 			})
 	}
 
 	addProduct (product) {
-		axios.post(`/api/products/`, product)
+		return axios.post(`/api/products/`, product)
 			.then((product)=> {
 				this.getProductCategories()
-			})
-			.catch((err)=> {
-				console.log(`error ${err}`)
 			})
 	}
 

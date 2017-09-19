@@ -8,7 +8,8 @@ class ProductForm extends Component {
 			price : 0, 
 			inStock : false,
 			categoryId : undefined,
-			saveDisabled : true
+			saveDisabled : true,
+			showErr : false
 		} 
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleChange = this.handleChange.bind(this)
@@ -26,14 +27,25 @@ class ProductForm extends Component {
 	handleSubmit(event) {
 		event.preventDefault()
 		if (this.props.product) {
-			this.setState({saveDisabled : true})
 			const {name, price, inStock, categoryId} = this.state
 			const newProduct = Object.assign(this.props.product, {name,price,inStock,categoryId})
 			this.props.editProduct(newProduct) 
+				.then(()=> {
+					this.setState({saveDisabled : true})
+				})
+				.catch((err)=> {
+					this.setState({showErr : true})
+				})
 		}
 		else {
 			this.props.addProduct(this.state)
-			this.setState({ name : '', price : 0, inStock : false, categoryId : undefined, saveDisabled : true })
+				.then(()=> {
+					this.setState({ name : '', price : 0, inStock : false, categoryId : undefined, saveDisabled : true })
+				})
+				.catch((err)=> {
+					console.log(err.message)
+					this.setState({showErr : true})
+				})
 		}
 	}
 
@@ -41,7 +53,7 @@ class ProductForm extends Component {
 		const value = event.target.name == "inStock" ? 
 			event.target.checked :
 			event.target.value
-		this.setState({ [event.target.name] : value, saveDisabled : false})
+		this.setState({ [event.target.name] : value, saveDisabled : false, showErr : false})
 	}
 
 	render() {
@@ -49,6 +61,11 @@ class ProductForm extends Component {
 			<div className='panel-body'> 
 				<form onSubmit={this.handleSubmit}>
 					<fieldset>
+						{
+							this.state.showErr ? 
+								<div className='alert alert-danger'> name must be unique  </div>:
+								null
+						}
 					<div className='form-group'>
 						<label>Name</label>
 						<input 
@@ -102,11 +119,14 @@ class ProductForm extends Component {
 							className="btn btn-primary btn-block"
 							disabled={this.state.saveDisabled}
 						>Save</button>
-						<button
-							type="button"
-							onClick={()=>this.props.deleteProduct(this.props.product.id)}
-							className="btn btn-danger btn-block"
-						>Delete</button>
+						{ 
+							this.props.product ? 
+							<button
+								type="button"
+								onClick={()=>this.props.deleteProduct(this.props.product.id)}
+								className="btn btn-danger btn-block"
+							>Delete</button> : null
+						} 
 					</div>
 				</fieldset>
 			</form>

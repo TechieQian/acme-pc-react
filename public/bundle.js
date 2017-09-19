@@ -10193,7 +10193,8 @@ var ProductForm = function (_Component) {
 			price: 0,
 			inStock: false,
 			categoryId: undefined,
-			saveDisabled: true
+			saveDisabled: true,
+			showErr: false
 		};
 		_this.handleSubmit = _this.handleSubmit.bind(_this);
 		_this.handleChange = _this.handleChange.bind(_this);
@@ -10216,9 +10217,10 @@ var ProductForm = function (_Component) {
 	}, {
 		key: 'handleSubmit',
 		value: function handleSubmit(event) {
+			var _this2 = this;
+
 			event.preventDefault();
 			if (this.props.product) {
-				this.setState({ saveDisabled: true });
 				var _state = this.state,
 				    name = _state.name,
 				    price = _state.price,
@@ -10226,10 +10228,18 @@ var ProductForm = function (_Component) {
 				    categoryId = _state.categoryId;
 
 				var newProduct = Object.assign(this.props.product, { name: name, price: price, inStock: inStock, categoryId: categoryId });
-				this.props.editProduct(newProduct);
+				this.props.editProduct(newProduct).then(function () {
+					_this2.setState({ saveDisabled: true });
+				}).catch(function (err) {
+					_this2.setState({ showErr: true });
+				});
 			} else {
-				this.props.addProduct(this.state);
-				this.setState({ name: '', price: 0, inStock: false, categoryId: undefined, saveDisabled: true });
+				this.props.addProduct(this.state).then(function () {
+					_this2.setState({ name: '', price: 0, inStock: false, categoryId: undefined, saveDisabled: true });
+				}).catch(function (err) {
+					console.log(err.message);
+					_this2.setState({ showErr: true });
+				});
 			}
 		}
 	}, {
@@ -10238,12 +10248,12 @@ var ProductForm = function (_Component) {
 			var _setState;
 
 			var value = event.target.name == "inStock" ? event.target.checked : event.target.value;
-			this.setState((_setState = {}, _defineProperty(_setState, event.target.name, value), _defineProperty(_setState, 'saveDisabled', false), _setState));
+			this.setState((_setState = {}, _defineProperty(_setState, event.target.name, value), _defineProperty(_setState, 'saveDisabled', false), _defineProperty(_setState, 'showErr', false), _setState));
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this2 = this;
+			var _this3 = this;
 
 			return _react2.default.createElement(
 				'div',
@@ -10254,6 +10264,11 @@ var ProductForm = function (_Component) {
 					_react2.default.createElement(
 						'fieldset',
 						null,
+						this.state.showErr ? _react2.default.createElement(
+							'div',
+							{ className: 'alert alert-danger' },
+							' name must be unique  '
+						) : null,
 						_react2.default.createElement(
 							'div',
 							{ className: 'form-group' },
@@ -10338,17 +10353,17 @@ var ProductForm = function (_Component) {
 								},
 								'Save'
 							),
-							_react2.default.createElement(
+							this.props.product ? _react2.default.createElement(
 								'button',
 								{
 									type: 'button',
 									onClick: function onClick() {
-										return _this2.props.deleteProduct(_this2.props.product.id);
+										return _this3.props.deleteProduct(_this3.props.product.id);
 									},
 									className: 'btn btn-danger btn-block'
 								},
 								'Delete'
-							)
+							) : null
 						)
 					)
 				)
@@ -23360,7 +23375,7 @@ var Main = function (_Component) {
 		value: function editProduct(product) {
 			var _this3 = this;
 
-			_axios2.default.put('/api/products/' + product.id, product).then(function (product) {
+			return _axios2.default.put('/api/products/' + product.id, product).then(function (product) {
 				_this3.getProductCategories();
 			});
 		}
@@ -23369,10 +23384,8 @@ var Main = function (_Component) {
 		value: function addProduct(product) {
 			var _this4 = this;
 
-			_axios2.default.post('/api/products/', product).then(function (product) {
+			return _axios2.default.post('/api/products/', product).then(function (product) {
 				_this4.getProductCategories();
-			}).catch(function (err) {
-				console.log('error ' + err);
 			});
 		}
 	}, {
